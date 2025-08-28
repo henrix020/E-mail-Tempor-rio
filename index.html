@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TempMail Brasil - Email Temporário</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #9ca3af;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 40px;
+            color: var(--primary);
+        }
+        
+        .logo h1 {
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .email-generator {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .email-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .email-address {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            border: 2px dashed var(--primary);
+            min-width: 300px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .inbox {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .inbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .email-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .email-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .email-item:hover {
+            background: var(--light);
+        }
+        
+        .email-item.unread {
+            background: #e6f7ff;
+            font-weight: 600;
+        }
+        
+        .email-sender {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .email-subject {
+            flex: 1;
+            margin: 0 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .email-time {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light);
+            color: var(--gray);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .email-display {
+                flex-direction: column;
+            }
+            
+            .email-address {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-envelope"></i>
+                <h1>TempMail Brasil</h1>
+            </div>
+            <p>Email temporário gratuito e descartável</p>
+        </header>
+
+        <div class="email-generator">
+            <h2>Gerar Email Temporário</h2>
+            <div class="email-display">
+                <div class="email-address" id="email-address">carregando...</div>
+                <button class="btn btn-primary" onclick="copiarEmail()">
+                    <i class="fas fa-copy"></i> Copiar
+                </button>
+                <button class="btn btn-secondary" onclick="gerarNovoEmail()">
+                    <i class="fas fa-sync"></i> Novo Email
+                </button>
+            </div>
+            <p>Use este email para cadastros temporários. Os emails recebidos aparecerão abaixo.</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Proteja sua Privacidade</h3>
+                <p>Mantenha seu email principal livre de spam</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-clock"></i>
+                <h3>Temporário</h3>
+                <p>Emails são automaticamente descartados</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-lock"></i>
+                <h3>Seguro</h3>
+                <p>Sem registro necessário, use instantaneamente</p>
+            </div>
+        </div>
+
+        <div class="inbox">
+            <div class="inbox-header">
+                <h2><i class="fas fa-inbox"></i> Caixa de Entrada</h2>
+                <span id="email-count">0 emails</span>
+            </div>
+            <div class="email-list" id="email-list">
+                <div class="email-item" onclick="mostrarEmail(this)">
+                    <div class="email-sender">Facebook</div>
+                    <div class="email-subject">Confirme sua conta no Facebook</div>
+                    <div class="email-time">2 min atrás</div>
+                </div>
+                <div class="email-item unread" onclick="mostrarEmail(this)">
+                    <div class="email-sender">Twitter</div>
+                    <div class="email-subject">Verificação de email do Twitter</div>
+                    <div class="email-time">5 min atrás</div>
+                </div>
+                <div class="email-item" onclick="mostrarEmail(this)">
+                    <div class="email-sender">Instagram</div>
+                    <div class="email-subject">Código de verificação da sua conta</div>
+                    <div class="email-time">10 min atrás</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>TempMail Brasil &copy; 2023 - Email temporário gratuito</p>
+            <p>Este é um serviço simulado para demonstração.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Gerador de emails temporários
+        function gerarEmail() {
+            const dominios = ['tempmail.com.br', 'emailtmp.com', 'descartavel.com', 'tmpmail.org'];
+            const usuario = Math.random().toString(36).substring(2, 10);
+            const dominio = dominios[Math.floor(Math.random() * dominios.length)];
+            return `${usuario}@${dominio}`;
+        }
+
+        // Atualiza o email exibido
+        function atualizarEmail() {
+            const email = gerarEmail();
+            document.getElementById('email-address').textContent = email;
+            localStorage.setItem('tempEmail', email);
+        }
+
+        // Copiar email para área de transferência
+        function copiarEmail() {
+            const email = document.getElementById('email-address').textContent;
+            navigator.clipboard.writeText(email).then(() => {
+                alert('Email copiado para a área de transferência!');
+            });
+        }
+
+        // Gerar novo email
+        function gerarNovoEmail() {
+            atualizarEmail();
+            document.getElementById('email-list').innerHTML = `
+                <div class="email-item">
+                    <div class="email-sender">Sistema</div>
+                    <div class="email-subject">Email novo gerado com sucesso</div>
+                    <div class="email-time">Agora</div>
+                </div>
+            `;
+            document.getElementById('email-count').textContent = '1 email';
+        }
+
+        // Mostrar conteúdo do email
+        function mostrarEmail(elemento) {
+            elemento.classList.remove('unread');
+            const emailsNaoLidos = document.querySelectorAll('.email-item.unread').length;
+            document.getElementById('email-count').textContent = `${emailsNaoLidos} emails`;
+            alert('Em um sistema real, aqui apareceria o conteúdo do email.');
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailSalvo = localStorage.getItem('tempEmail');
+            if (emailSalvo) {
+                document.getElementById('email-address').textContent = emailSalvo;
+            } else {
+                atualizarEmail();
+            }
+            
+            const emailsNaoLidos = document.querySelectorAll('.email-item.unread').length;
+            document.getElementById('email-count').textContent = `${emailsNaoLidos} emails`;
+        });
+    </script>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
